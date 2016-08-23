@@ -10,12 +10,17 @@
 
 namespace HeimrichHannot\Observer\Backend;
 
+use HeimrichHannot\Haste\Database\QueryHelper;
+use HeimrichHannot\Haste\Dca\Notification;
+use HeimrichHannot\Haste\Model\MemberModel;
 use HeimrichHannot\Haste\Util\StringUtil;
+use HeimrichHannot\Observer\Observer;
 use HeimrichHannot\Observer\ObserverConfig;
 use HeimrichHannot\Observer\ObserverLog;
 use HeimrichHannot\Observer\ObserverLogModel;
 use HeimrichHannot\Observer\ObserverManager;
 use HeimrichHannot\Observer\ObserverModel;
+use HeimrichHannot\Observer\ObserverNotification;
 
 class ObserverBackend extends \Backend
 {
@@ -92,16 +97,11 @@ class ObserverBackend extends \Backend
 	 */
 	public function colorize($arrRow, $label)
 	{
-		$objLatestLog = ObserverLogModel::findLatestByTypeAndPid(ObserverLog::TYPE_INVOKE, $arrRow['id']);
-		
-		if($objLatestLog !== null)
-		{
-			$strClass = ObserverLog::getColorClassFromAction($objLatestLog->action);
-		}
+		$strClass = ObserverLog::getColorClassFromAction($arrRow['invokedState']);
 		
 		$strClass = ($strClass ? ' class="' . $strClass . '"' : '');
 		
-		return '<div class="ellipsis">' . $arrRow['title'] . ' <span style="padding-left:3px"' . $strClass . '>[' . \Date::parse(\Config::get('datimFormat'), $objLatestLog->tstamp) . ']</span> [' . $arrRow['priority'] .']</div>';
+		return '<div class="ellipsis">' . $arrRow['title'] . ' <span style="padding-left:3px"' . $strClass . '>[' . \Date::parse(\Config::get('datimFormat'), $arrRow['invoked']) . ']</span> [' . $arrRow['priority'] .']</div>';
 	}
 	
 	/**
@@ -142,7 +142,25 @@ class ObserverBackend extends \Backend
 		
 		return $varValue;
 	}
-	
+
+
+	public function getCronIntervals(\DataContainer $dc)
+	{
+		return ObserverConfig::getCronIntervals();
+	}
+
+
+	/**
+	 * Get all observer states
+	 * @param \DataContainer $dc
+	 *
+	 * @return array
+	 */
+	public function getObserverStates(\DataContainer $dc)
+	{
+		return Observer::getStates();
+	}
+
 	/**
 	 * Get all subjects as array
 	 * @param \DataContainer $dc
@@ -171,4 +189,49 @@ class ObserverBackend extends \Backend
 
 		return ObserverConfig::getObserverByModel($objModel);
 	}
+
+	/**
+	 * Get all available notifications
+	 * @param \DataContainer $dc
+	 *
+	 * @return array
+	 */
+	public function getNotifications(\DataContainer $dc)
+	{
+		return Notification::getNotificationMessagesAsOptions($dc, ObserverNotification::NOTIFICATION_TYPE_OBSERVER_NOTIFICATION);
+	}
+
+	/**
+	 * Get all members from selected member groups as options
+	 * @return array
+	 */
+	public function getMemberGroupMembers(\DataContainer $dc)
+	{
+		$arrOptions = array();
+
+		$objObserver = ObserverModel::findByPk($dc->id);
+
+		if($objObserver === null)
+		{
+			return $arrOptions;
+		}
+
+		$arrGroups = deserialize($objObserver->memberGroups, true);
+
+		$objMembers = MemberModel::findActiveByGroups($arrGroups);
+
+		if($objMembers === null)
+		{
+			return $arrOptions;
+		}
+
+		while ($objMembers->next())
+		{
+			$arrOptions[$objMembers->id] = sprintf('%s %s [ID:%s]', $objMembers->lastname, $objMembers->firstname, $objMembers->id);
+		}
+
+		return $arrOptions;
+	}
+
+
 }

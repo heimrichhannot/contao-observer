@@ -11,6 +11,8 @@
 namespace HeimrichHannot\Observer;
 
 
+use HeimrichHannot\Haste\Util\Classes;
+
 class ObserverConfig
 {
 	const OBSERVER_SUBJECT_MAIl = 'mail';
@@ -51,13 +53,23 @@ class ObserverConfig
 
 			if(!is_array($arrPalettes) || !isset($arrPalettes[$objModel->subject]))
 			{
-				return;
+				continue;
 			}
 
 			$arrOptions[] = $strAction;
 		}
 
 		return $arrOptions;
+	}
+
+
+	/**
+	 * Get all cron interval options
+	 * @return array
+	 */
+	public static function getCronIntervals()
+	{
+		return Classes::getConstantsByPrefixes(__CLASS__, array('OBSERVER_CRON_'));
 	}
 
 	/**

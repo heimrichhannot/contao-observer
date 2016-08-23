@@ -23,7 +23,7 @@ $GLOBALS['TL_DCA']['tl_observer_history'] = array(
 			'fields'                => array('tstamp DESC', 'id DESC'),
 			'headerFields'          => array('type', 'title', 'tstamp', 'invoked'),
 			'panelLayout'           => 'filter;sort,search,limit',
-			'child_record_callback' => array('HeimrichHannot\Observer\Backend\ObserverHistoryBackend', 'colorize'),
+			'child_record_callback' => array('HeimrichHannot\Observer\Backend\ObserverHistoryBackend', 'listItem'),
 		),
 		'global_operations' => array(
 			'all' => array(
@@ -65,8 +65,10 @@ $GLOBALS['TL_DCA']['tl_observer_history'] = array(
 			'sql'    => "int(10) unsigned NOT NULL default '0'",
 		),
 		'entityId' => array(
-			'label' => &$GLOBALS['TL_LANG']['tl_observer_history']['entityId'],
-			'sql'   => "varchar(255) NOT NULL default ''",
+			'label'     => &$GLOBALS['TL_LANG']['tl_observer_history']['entityId'],
+			'inputType' => 'textarea', // required to convert html entities with specialchars()
+			'sql'       => "varchar(255) NOT NULL default ''",
+			'eval'      => array('preserveTags' => true),
 		),
 		'state'    => array(
 			'label'  => &$GLOBALS['TL_LANG']['tl_observer_history']['state'],

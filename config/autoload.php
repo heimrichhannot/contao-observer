@@ -32,6 +32,7 @@ ClassLoader::addClasses(array
 	'HeimrichHannot\Observer\MailSubject'                    => 'system/modules/observer/observer/subjects/MailSubject.php',
 	'HeimrichHannot\Observer\Subject'                        => 'system/modules/observer/observer/subjects/Subject.php',
 	'HeimrichHannot\Observer\Observer'                       => 'system/modules/observer/observer/observers/Observer.php',
+	'HeimrichHannot\Observer\NotificationObserver'           => 'system/modules/observer/observer/observers/NotificationObserver.php',
 
 	// Classes
 	'HeimrichHannot\Observer\ObserverManager'                => 'system/modules/observer/classes/ObserverManager.php',
@@ -40,4 +41,5 @@ ClassLoader::addClasses(array
 	'HeimrichHannot\Observer\Backend\ObserverHistoryBackend' => 'system/modules/observer/classes/backend/ObserverHistoryBackend.php',
 	'HeimrichHannot\Observer\Backend\ObserverBackend'        => 'system/modules/observer/classes/backend/ObserverBackend.php',
 	'HeimrichHannot\Observer\ObserverConfig'                 => 'system/modules/observer/classes/ObserverConfig.php',
+	'HeimrichHannot\Observer\ObserverNotification'           => 'system/modules/observer/classes/ObserverNotification.php',
 ));

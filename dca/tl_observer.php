@@ -43,40 +43,39 @@ $GLOBALS['TL_DCA']['tl_observer'] = array(
 			),
 		),
 		'operations'        => array(
-			'edit'   => array(
+			'edit'    => array(
 				'label' => &$GLOBALS['TL_LANG']['tl_observer']['edit'],
 				'href'  => 'act=edit',
 				'icon'  => 'edit.gif',
 			),
-			'copy'   => array(
+			'copy'    => array(
 				'label' => &$GLOBALS['TL_LANG']['tl_observer']['copy'],
 				'href'  => 'act=copy',
 				'icon'  => 'copy.gif',
 			),
-			'delete' => array(
+			'delete'  => array(
 				'label'      => &$GLOBALS['TL_LANG']['tl_observer']['delete'],
 				'href'       => 'act=delete',
 				'icon'       => 'delete.gif',
-				'attributes' => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm']
-								. '\'))return false;Backend.getScrollOffset()"',
+				'attributes' => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
 			),
-			'toggle' => array(
+			'toggle'  => array(
 				'label'           => &$GLOBALS['TL_LANG']['tl_observer']['toggle'],
 				'icon'            => 'visible.gif',
 				'attributes'      => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
 				'button_callback' => array('tl_observer', 'toggleIcon'),
 			),
-			'log'    => array(
+			'log'     => array(
 				'label' => &$GLOBALS['TL_LANG']['tl_observer']['log'],
 				'href'  => 'table=tl_observer_log',
 				'icon'  => 'log.gif',
 			),
-			'history'    => array(
+			'history' => array(
 				'label' => &$GLOBALS['TL_LANG']['tl_observer']['history'],
 				'href'  => 'table=tl_observer_history',
 				'icon'  => 'modules.gif',
 			),
-			'show'   => array(
+			'show'    => array(
 				'label' => &$GLOBALS['TL_LANG']['tl_observer']['show'],
 				'href'  => 'act=show',
 				'icon'  => 'show.gif',
@@ -84,14 +83,15 @@ $GLOBALS['TL_DCA']['tl_observer'] = array(
 		),
 	),
 	'palettes'    => array(
-		'__selector__'                        => array('subject', 'useCronExpression', 'action', 'addActionSkipStates', 'published'),
+		'__selector__'                        => array('subject', 'useCronExpression', 'action', 'limitMembers', 'addObserverStates', 'published'),
 		'default'                             => '{general_legend},subject;{publish_legend},published;',
-		ObserverConfig::OBSERVER_SUBJECT_MAIl => '{general_legend},subject,title;{mailbox_legend},imapPath,imapLogin,imapPassword,imapOptions,imapRetriesNum,attachmentsDir,expungeOnDisconnect,imapSearchCriteria;{cronjob_legend},cronInterval,useCronExpression,priority,invoked;{observer_legend},observer;{expert_legend},debug,addObserverCriteria;{publish_legend},published;',
+		ObserverConfig::OBSERVER_SUBJECT_MAIl => '{general_legend},subject,title;{mailbox_legend},imapPath,imapLogin,imapPassword,imapOptions,imapRetriesNum,attachmentsDir,expungeOnDisconnect,imapSearchCriteria;{cronjob_legend},cronInterval,useCronExpression,priority,invoked,invokedState;{observer_legend},observer;{expert_legend},debug,addObserverStates;{publish_legend},published;',
 	),
 	'subpalettes' => array(
-		'useCronExpression'   => 'cronExpression',
-		'addActionSkipStates' => 'actionSkipStates',
-		'published'           => 'start,stop',
+		'useCronExpression' => 'cronExpression',
+		'addObserverStates' => 'observerStates',
+		'limitMembers'      => 'memberGroupMembers',
+		'published'         => 'start,stop',
 	),
 	'fields'      => array(
 		'id'                  => array(
@@ -117,7 +117,7 @@ $GLOBALS['TL_DCA']['tl_observer'] = array(
 			'eval'      => array('mandatory' => true, 'tl_class' => 'w50'),
 			'sql'       => "varchar(255) NOT NULL default ''",
 		),
-		'subject'                => array(
+		'subject'             => array(
 			'label'            => &$GLOBALS['TL_LANG']['tl_observer']['subject'],
 			'exclude'          => true,
 			'filter'           => true,
@@ -204,20 +204,13 @@ $GLOBALS['TL_DCA']['tl_observer'] = array(
 			'sql'       => "int(1) NOT NULL default '0'",
 		),
 		'cronInterval'        => array(
-			'label'     => &$GLOBALS['TL_LANG']['tl_observer']['cronInterval'],
-			'exclude'   => true,
-			'inputType' => 'select',
-			'options'   => array(
-				ObserverConfig::OBSERVER_CRON_MINUTELY,
-				ObserverConfig::OBSERVER_CRON_HOURLY,
-				ObserverConfig::OBSERVER_CRON_DAILY,
-				ObserverConfig::OBSERVER_CRON_WEEKLY,
-				ObserverConfig::OBSERVER_CRON_MONTHLY,
-				ObserverConfig::OBSERVER_CRON_YEARLY,
-			),
-			'reference' => &$GLOBALS['TL_LANG']['MSC']['cronInterval'],
-			'eval'      => array('tl_class' => 'w50', 'includeBlankOption' => true),
-			'sql'       => "varchar(12) NOT NULL default ''",
+			'label'            => &$GLOBALS['TL_LANG']['tl_observer']['cronInterval'],
+			'exclude'          => true,
+			'inputType'        => 'select',
+			'options_callback' => array('HeimrichHannot\Observer\Backend\ObserverBackend', 'getCronIntervals'),
+			'reference'        => &$GLOBALS['TL_LANG']['MSC']['cronInterval'],
+			'eval'             => array('tl_class' => 'w50', 'includeBlankOption' => true),
+			'sql'              => "varchar(12) NOT NULL default ''",
 		),
 		'useCronExpression'   => array(
 			'label'     => &$GLOBALS['TL_LANG']['tl_observer']['useCronExpression'],
@@ -245,10 +238,17 @@ $GLOBALS['TL_DCA']['tl_observer'] = array(
 			'label'     => &$GLOBALS['TL_LANG']['tl_observer']['invoked'],
 			'exclude'   => true,
 			'inputType' => 'text',
-			'eval'      => array('rgxp' => 'datim', 'readonly' => 'true', 'tl_class' => 'w50'),
+			'eval'      => array('rgxp' => 'datim', 'readonly' => 'true', 'tl_class' => 'clr w50'),
 			'sql'       => "varchar(10) NOT NULL default ''",
 		),
-		'observer'              => array(
+		'invokedState'        => array(
+			'label'     => &$GLOBALS['TL_LANG']['tl_observer']['invokedState'],
+			'exclude'   => true,
+			'inputType' => 'text',
+			'eval'      => array('tl_class' => 'w50', 'includeBlankOption' => true, 'readonly' => true),
+			'sql'       => "varchar(64) NOT NULL default ''",
+		),
+		'observer'            => array(
 			'label'            => &$GLOBALS['TL_LANG']['tl_observer']['observer'],
 			'exclude'          => true,
 			'filter'           => true,
@@ -259,19 +259,95 @@ $GLOBALS['TL_DCA']['tl_observer'] = array(
 			'eval'             => array('includeBlankOption' => true, 'chosen' => true, 'submitOnChange' => true, 'tl_class' => 'w50'),
 			'sql'              => "varchar(64) NOT NULL default ''",
 		),
-		'addObserverCriteria'           => array(
-			'label'     => &$GLOBALS['TL_LANG']['tl_observer']['addObserverCriteria'],
+		'addObserverStates'   => array(
+			'label'     => &$GLOBALS['TL_LANG']['tl_observer']['addObserverStates'],
 			'exclude'   => true,
 			'inputType' => 'checkbox',
-			'eval'      => array('doNotCopy' => true, 'submitOnChange' => true,'tl_class' => 'clr w50'),
+			'eval'      => array('doNotCopy' => true, 'submitOnChange' => true, 'tl_class' => 'clr w50'),
 			'sql'       => "char(1) NOT NULL default ''",
 		),
-		'observerCriteria'    => array(
-			'label'     => &$GLOBALS['TL_LANG']['tl_observer']['observerCriteria'],
+		'observerStates'      => array(
+			'label'            => &$GLOBALS['TL_LANG']['tl_observer']['observerStates'],
+			'exclude'          => true,
+			'inputType'        => 'checkboxWizard',
+			'default'          => array(\HeimrichHannot\Observer\Observer::STATE_SUCCESS),
+			'reference'        => $GLOBALS['TL_LANG']['OBSERVER_STATES'],
+			'options_callback' => array('HeimrichHannot\Observer\Backend\ObserverBackend', 'getObserverStates'),
+			'eval'             => array('tl_class' => 'clr wizard', 'maxlength' => 255, 'multiple' => true, 'mandatory' => true),
+			'sql'              => "blob NULL",
+		),
+		'notification'        => array(
+			'label'            => &$GLOBALS['TL_LANG']['tl_observer']['notification'],
+			'exclude'          => true,
+			'inputType'        => 'select',
+			'options_callback' => array('HeimrichHannot\Observer\Backend\ObserverBackend', 'getNotifications'),
+			'eval'             => array('tl_class' => 'clr', 'mandatory' => true, 'includeBlankOption' => true),
+			'sql'              => "int(10) unsigned NOT NULL default '0'",
+		),
+		'members'             => array(
+			'label'     => &$GLOBALS['TL_LANG']['tl_observer']['members'],
 			'exclude'   => true,
-			'inputType' => 'text',
-			'eval'      => array('tl_class' => 'clr long', 'maxlength' => 255),
-			'sql'       => "varchar(255) NOT NULL default ''",
+			'inputType' => 'tagsinput',
+			'eval'      => array(
+				'tl_class'    => 'clr',
+				'multiple'    => true,
+				'placeholder' => &$GLOBALS['TL_LANG']['tl_observer']['placeholder']['members'],
+				'mode'        => \TagsInput::MODE_REMOTE,
+				'remote'      => array(
+					'fields'       => array('lastname', 'firstname', 'id'),
+					'format'       => '%s %s [ID:%s]',
+					'queryField'   => 'lastname',
+					'queryPattern' => '%QUERY%',
+					'foreignKey'   => 'tl_member.id',
+					'limit'        => 10,
+				),
+			),
+			'sql'       => "blob NULL",
+		),
+		'memberGroups'        => array(
+			'label'     => &$GLOBALS['TL_LANG']['tl_observer']['memberGroups'],
+			'exclude'   => true,
+			'inputType' => 'tagsinput',
+			'eval'      => array(
+				'tl_class'    => 'clr',
+				'multiple'    => true,
+				'placeholder' => &$GLOBALS['TL_LANG']['tl_observer']['placeholder']['members'],
+				'mode'        => \TagsInput::MODE_REMOTE,
+				'remote'      => array(
+					'fields'       => array('name', 'id'),
+					'format'       => '%s [ID:%s]',
+					'queryField'   => 'name',
+					'queryPattern' => '%QUERY%',
+					'foreignKey'   => 'tl_member_group.id',
+					'limit'        => 10,
+				),
+			),
+			'sql'       => "blob NULL",
+		),
+		'limitMembers'        => array(
+			'label'     => &$GLOBALS['TL_LANG']['tl_observer']['limitMembers'],
+			'exclude'   => true,
+			'inputType' => 'checkbox',
+			'eval'      => array('doNotCopy' => true, 'submitOnChange' => true),
+			'sql'       => "char(1) NOT NULL default ''",
+		),
+		'memberGroupMembers'  => array(
+			'label'            => &$GLOBALS['TL_LANG']['tl_observer']['memberGroupMembers'],
+			'exclude'          => true,
+			'inputType'        => 'tagsinput',
+			'options_callback' => array('HeimrichHannot\Observer\Backend\ObserverBackend', 'getMemberGroupMembers'),
+			'eval'             => array(
+				'mandatory'   => true,
+				'placeholder' => &$GLOBALS['TL_LANG']['tl_observer']['placeholder']['memberGroupMembers'],
+				'tl_class'    => 'clr',
+				'multiple'    => true,
+				'mode'        => \TagsInput::MODE_REMOTE,
+				'remote'      => array(
+					'queryPattern' => '%QUERY%',
+					'limit'        => 10,
+				),
+			),
+			'sql'              => "blob NULL",
 		),
 		'published'           => array(
 			'label'     => &$GLOBALS['TL_LANG']['tl_observer']['published'],
@@ -325,8 +401,7 @@ class tl_observer extends \Backend
 			$icon = 'invisible.gif';
 		}
 
-		return '<a href="' . $this->addToUrl($href) . '" title="' . specialchars($title) . '"' . $attributes . '>' . Image::getHtml($icon, $label)
-			   . '</a> ';
+		return '<a href="' . $this->addToUrl($href) . '" title="' . specialchars($title) . '"' . $attributes . '>' . Image::getHtml($icon, $label) . '</a> ';
 	}
 
 	public function toggleVisibility($intId, $blnVisible)

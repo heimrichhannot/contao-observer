@@ -35,6 +35,21 @@ array_insert(
 	array()
 );
 
+/**
+ * Notification Center Notification Types
+ */
+$arrTaskNotification                 = \HeimrichHannot\Haste\Dca\Notification::getNewNotificationTypeArray(true);
+$arrTaskNotification                 = \HeimrichHannot\Haste\Dca\Notification::addFormHybridStyleEntityTokens('observer_entity', $arrTaskNotification);
+$arrTaskNotification                 = \HeimrichHannot\Haste\Dca\Notification::addFormHybridStyleEntityTokens('observer_member', $arrTaskNotification);
+$arrTaskNotification['email_text'][] = 'salutation_member';
+$arrTaskNotification['email_html'][] = 'salutation_member';
+
+\HeimrichHannot\Haste\Dca\Notification::activateType(
+	HeimrichHannot\Observer\ObserverNotification::NOTIFICATION_TYPE_OBSERVER,
+	HeimrichHannot\Observer\ObserverNotification::NOTIFICATION_TYPE_OBSERVER_NOTIFICATION,
+	$arrTaskNotification
+);
+
 
 /**
  * Observer manager

@@ -19,6 +19,8 @@
     "require": {
         "contao/core": ">=3.2,<4-dev",
         "contao-community-alliance/composer-installer": "*",
+        "heimrichhannot/contao-tagsinput": "~2.0",
+        "heimrichhannot/contao-notification_center_plus": "~1.0",
 		"php-imap/php-imap": "~2.0",
 		"mtdowling/cron-expression": "~1.0"
     },

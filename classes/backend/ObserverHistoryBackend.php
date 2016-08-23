@@ -17,18 +17,16 @@ class ObserverHistoryBackend extends \Backend
 {
 	
 	/**
-	 * Colorize the history entries depending on their state
+	 * List the history entries
 	 *
 	 * @param array $arrRow
 	 *
 	 * @return string
 	 */
-	public function colorize($arrRow)
+	public function listItem($arrRow)
 	{
-		$strClass = ObserverLog::getColorClassFromAction($arrRow['state']);
-		
-		$strClass = ($strClass ? ' ' : '') . $strClass;
-		
-		return '<div class="ellipsis ' . $strClass . '"><span style="padding-right:3px">[' . \Date::parse(\Config::get('datimFormat'), $arrRow['tstamp']) . ']</span>' . $arrRow['state'] . '</div>';
+		$state = $GLOBALS['TL_LANG']['OBSERVER_STATES'][$arrRow['state']] ?: $arrRow['state'];
+
+		return '<div class="ellipsis"><span style="padding-right:3px">[' . \Date::parse(\Config::get('datimFormat'), $arrRow['tstamp']) . ']</span>' . htmlspecialchars($arrRow['entityId']) . ' (' . $state . ')</div>';
 	}
 }

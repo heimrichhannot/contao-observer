@@ -30,10 +30,16 @@ $GLOBALS['TL_LANG']['MSC']['imapOptions'][OP_SECURE]     = '<strong>OP_SECURE</s
 /**
  * Cron intervals
  */
-
 $GLOBALS['TL_LANG']['MSC']['cronInterval'][\HeimrichHannot\Observer\ObserverConfig::OBSERVER_CRON_MINUTELY] = 'Minutely';
 $GLOBALS['TL_LANG']['MSC']['cronInterval'][\HeimrichHannot\Observer\ObserverConfig::OBSERVER_CRON_HOURLY]   = 'Hourly';
 $GLOBALS['TL_LANG']['MSC']['cronInterval'][\HeimrichHannot\Observer\ObserverConfig::OBSERVER_CRON_DAILY]    = 'Daily';
 $GLOBALS['TL_LANG']['MSC']['cronInterval'][\HeimrichHannot\Observer\ObserverConfig::OBSERVER_CRON_WEEKLY]   = 'Weekly';
 $GLOBALS['TL_LANG']['MSC']['cronInterval'][\HeimrichHannot\Observer\ObserverConfig::OBSERVER_CRON_MONTHLY]  = 'Monthly';
 $GLOBALS['TL_LANG']['MSC']['cronInterval'][\HeimrichHannot\Observer\ObserverConfig::OBSERVER_CRON_YEARLY]   = 'Yearly';
+
+/**
+ * Observer states
+ */
+$GLOBALS['TL_LANG']['OBSERVER_STATES']['success'] = 'Success';
+$GLOBALS['TL_LANG']['OBSERVER_STATES']['error'] = 'Error';
+$GLOBALS['TL_LANG']['OBSERVER_STATES']['runonce'] = 'Run once';

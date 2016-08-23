@@ -41,7 +41,7 @@ class MailSubject extends Subject
 				ObserverLog::add($this->getModel()->id, 'Mailbox is empty', __CLASS__ . ':' . __METHOD__);
 			}
 
-			return false;
+			return;
 		}
 
 		// put the newest mails on top

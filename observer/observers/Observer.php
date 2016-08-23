@@ -11,10 +11,13 @@
 namespace HeimrichHannot\Observer;
 
 
+use HeimrichHannot\Haste\Util\Classes;
+
 abstract class Observer
 {
-	const STATE_ERROR   = 'error';
-	const STATE_SUCCESS = 'success';
+	const STATE_ERROR    = 'error';
+	const STATE_SUCCESS  = 'success';
+	const STATE_RUNONCE = 'runonce';
 
 	/**
 	 * The current child entity identifier
@@ -40,7 +43,7 @@ abstract class Observer
 	/**
 	 * @param Subject The subject object
 	 *
-	 * @return boolean True for success, false for error
+	 * @return boolean
 	 */
 	public function update(Subject $objSubject)
 	{
@@ -48,22 +51,29 @@ abstract class Observer
 
 		$this->entityId = $this->getEntityId();
 
-		if (ObserverHistoryModel::hasRun($objSubject->getModel()->id, $this->getEntityId()))
+		$arrStates = array(Observer::STATE_SUCCESS);
+
+		if($objSubject->getModel()->addObserverStates)
 		{
-			return false;
+			$arrStates = deserialize($objSubject->getModel()->observerStates, true);
+		}
+
+		if (ObserverHistoryModel::hasRun($objSubject->getModel()->id, $this->getEntityId(), $arrStates))
+		{
+			return true;
 		}
 
 		$this->doUpdate();
 
-		if(($objHistory = ObserverHistoryModel::findByParentAndEntityIdAndState($objSubject->getModel()->id, $this->getEntityId())) == null)
+		if (($objHistory = ObserverHistoryModel::findByParentAndEntityIdAndState($objSubject->getModel()->id, $this->getEntityId())) == null)
 		{
 			$objHistory = new ObserverHistoryModel();
 		}
 
-		$objHistory->pid = $objSubject->getModel()->id;
-		$objHistory->tstamp = time();
+		$objHistory->pid      = $objSubject->getModel()->id;
+		$objHistory->tstamp   = time();
 		$objHistory->entityId = $this->getEntityId();
-		$objHistory->state = $this->getState();
+		$objHistory->state    = $this->getState();
 		$objHistory->save();
 
 		return true;
@@ -109,4 +119,8 @@ abstract class Observer
 		return $this->objSubject;
 	}
 
+	public static function getStates()
+	{
+		return Classes::getConstantsByPrefixes(__CLASS__, array('STATE_'));
+	}
 }
