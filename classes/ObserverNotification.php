@@ -43,7 +43,7 @@ class ObserverNotification
 			$arrIds = array_merge($arrIds, $arrGroupMembers);
 		}
 
-		return MemberModel::findActiveByIds($arrIds);
+		return MemberModel::findAllActiveByIds($arrIds);
 	}
 
 	public static function sendNotification($intMessage, ObserverModel $objObserver, \Model $objEntity, \MemberModel $objMember, $arrTokens = array())

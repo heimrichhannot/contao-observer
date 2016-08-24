@@ -16,6 +16,7 @@ abstract class NotificationObserver extends Observer
 {
 	/**
 	 * The current notified member object
+	 *
 	 * @var MemberModel
 	 */
 	private $objMember;
@@ -31,12 +32,14 @@ abstract class NotificationObserver extends Observer
 
 		$objMembers = ObserverNotification::findToBeNotifiedMembers($this->getSubject()->getModel());
 
-		if($objMembers === null)
+		$objMembers = $this->modifyMembers($objMembers);
+
+		if ($objMembers === null)
 		{
 			return false;
 		}
 
-		while($objMembers->next())
+		while ($objMembers->next())
 		{
 			$this->objMember = $objMembers->current();
 
@@ -44,7 +47,7 @@ abstract class NotificationObserver extends Observer
 
 			$arrStates = array(Observer::STATE_SUCCESS);
 
-			if($objSubject->getModel()->addObserverStates)
+			if ($objSubject->getModel()->addObserverStates)
 			{
 				$arrStates = deserialize($objSubject->getModel()->observerStates, true);
 			}
@@ -75,7 +78,7 @@ abstract class NotificationObserver extends Observer
 	{
 		$blnReturn = $this->createNotification();
 
-		if(!$this->getState())
+		if (!$this->getState())
 		{
 			$this->setState($blnReturn ? Observer::STATE_SUCCESS : Observer::STATE_ERROR);
 		}
@@ -83,11 +86,24 @@ abstract class NotificationObserver extends Observer
 
 	/**
 	 * Get the current notified member object
+	 *
 	 * @return MemberModel
 	 */
 	public function getMember()
 	{
 		return $this->objMember;
+	}
+
+	/**
+	 * Modify members
+	 *
+	 * @param \Model\Collection|null $objMembers
+	 *
+	 * @return \Model\Collection|null Return the collection of member entities or null
+	 */
+	protected function modifyMembers($objMembers = null)
+	{
+		return $objMembers;
 	}
 
 	abstract protected function createNotification();

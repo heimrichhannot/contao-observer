@@ -27,27 +27,27 @@ class ObserverBackend extends \Backend
 
 	public function modifyDc(\DataContainer $dc)
 	{
-		if(($objModel = ObserverModel::findByPk($dc->id)) === null || !$objModel->subject)
+		if (($objModel = ObserverModel::findByPk($dc->id)) === null || !$objModel->subject)
 		{
 			return;
 		}
 
 
-		if(($objSubject = ObserverManager::findSubjectByModel($objModel)) === null)
+		if (($objSubject = ObserverManager::findSubjectByModel($objModel)) === null)
 		{
 			return;
 		}
 
 
-		if(($objObserver = ObserverManager::findObserverBySubject($objSubject)) === null)
+		if (($objObserver = ObserverManager::findObserverBySubject($objSubject)) === null)
 		{
 			return;
 		}
 
-		$arrDca = &$GLOBALS['TL_DCA']['tl_observer'];
+		$arrDca      = &$GLOBALS['TL_DCA']['tl_observer'];
 		$arrPalettes = $objObserver::getPalettes($dc);
 
-		if(!is_array($arrPalettes) || !is_array($arrDca['palettes']))
+		if (!is_array($arrPalettes) || !is_array($arrDca['palettes']))
 		{
 			return;
 		}
@@ -55,23 +55,24 @@ class ObserverBackend extends \Backend
 		foreach ($arrPalettes as $strKey => $strInvocation)
 		{
 			// skip if observer does not exist
-			if(!isset($arrDca['palettes'][$strKey]))
+			if (!isset($arrDca['palettes'][$strKey]))
 			{
 				continue;
 			}
 
-			if(!StringUtil::startsWith($strInvocation, '{'))
+			if (!StringUtil::startsWith($strInvocation, '{'))
 			{
 				$strInvocation = ',' . ltrim($strInvocation, ',;');
 			}
 
 
-			$arrDca['palettes'][$strKey] = str_replace(',observer', ',observer' .  $strInvocation, $arrDca['palettes'][$strKey]);
+			$arrDca['palettes'][$strKey] = str_replace(',observer', ',observer' . $strInvocation, $arrDca['palettes'][$strKey]);
 		}
 	}
 
 	/**
 	 * Modify the backend group title and add the action
+	 *
 	 * @param                $group
 	 * @param                $mode
 	 * @param                $field
@@ -82,11 +83,12 @@ class ObserverBackend extends \Backend
 	 */
 	public function getGroupTitle($group, $mode, $field, $row, \DataContainer $dc)
 	{
-		$strSubject = $GLOBALS['TL_LANG']['OBSERVER_SUBJECT'][$row['subject']] ?: $row['subject'];
+		$strSubject  = $GLOBALS['TL_LANG']['OBSERVER_SUBJECT'][$row['subject']] ?: $row['subject'];
 		$strObserver = $GLOBALS['TL_LANG']['OBSERVER_OBSERVER'][$row['observer']] ?: $row['observer'];
+
 		return '<span class="tl_blue">' . $strSubject . '</span> &raquo; ' . $strObserver;
 	}
-	
+
 	/**
 	 * Colorize the entries depending on their latest invocation
 	 *
@@ -98,14 +100,22 @@ class ObserverBackend extends \Backend
 	public function colorize($arrRow, $label)
 	{
 		$strClass = ObserverLog::getColorClassFromAction($arrRow['invokedState']);
-		
+
 		$strClass = ($strClass ? ' class="' . $strClass . '"' : '');
-		
-		return '<div class="ellipsis">' . $arrRow['title'] . ' <span style="padding-left:3px"' . $strClass . '>[' . \Date::parse(\Config::get('datimFormat'), $arrRow['invoked']) . ']</span> [' . $arrRow['priority'] .']</div>';
+
+		$strLabel = sprintf(
+			'<div class="ellipsis">%s%s%s</div>',
+			$arrRow['title'],
+			$arrRow['invoked'] ? '<span style="padding-left:3px"' . $strClass . '>[' . \Date::parse(\Config::get('datimFormat'), $arrRow['invoked']) . ']</span>' : '',
+			' [' . $arrRow['priority'] . ']'
+		);
+
+		return $strLabel;
 	}
-	
+
 	/**
 	 * On create callback
+	 *
 	 * @param                $strTable
 	 * @param                $insertID
 	 * @param                $arrSet
@@ -113,21 +123,22 @@ class ObserverBackend extends \Backend
 	 */
 	public function onCreate($strTable, $insertID, $arrSet, \DataContainer $dc)
 	{
-		if(($objModel = ObserverModel::findByPk($insertID)) === null)
+		if (($objModel = ObserverModel::findByPk($insertID)) === null)
 		{
 			return;
 		}
-		
-		if(($uuid = ObserverConfig::getDefaultAttachmentsDir()) !== null && \Validator::isUuid($uuid))
+
+		if (($uuid = ObserverConfig::getDefaultAttachmentsDir()) !== null && \Validator::isUuid($uuid))
 		{
 			$objModel->attachmentsDir = \StringUtil::uuidToBin($uuid);
 		}
-		
+
 		$objModel->save();
 	}
-	
+
 	/**
 	 * Set default attachment dir
+	 *
 	 * @param                $varValue
 	 * @param \DataContainer $dc
 	 *
@@ -139,7 +150,7 @@ class ObserverBackend extends \Backend
 		{
 			return ObserverConfig::getDefaultAttachmentsDir();
 		}
-		
+
 		return $varValue;
 	}
 
@@ -152,6 +163,7 @@ class ObserverBackend extends \Backend
 
 	/**
 	 * Get all observer states
+	 *
 	 * @param \DataContainer $dc
 	 *
 	 * @return array
@@ -163,6 +175,7 @@ class ObserverBackend extends \Backend
 
 	/**
 	 * Get all subjects as array
+	 *
 	 * @param \DataContainer $dc
 	 *
 	 * @return array
@@ -171,9 +184,10 @@ class ObserverBackend extends \Backend
 	{
 		return ObserverConfig::getSubjects();
 	}
-	
+
 	/**
 	 * Get all observer within selected subject
+	 *
 	 * @param \DataContainer $dc
 	 *
 	 * @return array
@@ -182,7 +196,7 @@ class ObserverBackend extends \Backend
 	{
 		$objModel = ObserverModel::findByPk($dc->id);
 
-		if($objModel === null)
+		if ($objModel === null)
 		{
 			return array();
 		}
@@ -192,6 +206,7 @@ class ObserverBackend extends \Backend
 
 	/**
 	 * Get all available notifications
+	 *
 	 * @param \DataContainer $dc
 	 *
 	 * @return array
@@ -203,6 +218,7 @@ class ObserverBackend extends \Backend
 
 	/**
 	 * Get all members from selected member groups as options
+	 *
 	 * @return array
 	 */
 	public function getMemberGroupMembers(\DataContainer $dc)
@@ -211,7 +227,7 @@ class ObserverBackend extends \Backend
 
 		$objObserver = ObserverModel::findByPk($dc->id);
 
-		if($objObserver === null)
+		if ($objObserver === null)
 		{
 			return $arrOptions;
 		}
@@ -220,7 +236,7 @@ class ObserverBackend extends \Backend
 
 		$objMembers = MemberModel::findActiveByGroups($arrGroups);
 
-		if($objMembers === null)
+		if ($objMembers === null)
 		{
 			return $arrOptions;
 		}

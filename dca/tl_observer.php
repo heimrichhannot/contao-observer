@@ -30,8 +30,8 @@ $GLOBALS['TL_DCA']['tl_observer'] = array(
 			'group_callback' => array('HeimrichHannot\Observer\Backend\ObserverBackend', 'getGroupTitle'),
 		),
 		'sorting'           => array(
-			'mode'        => 1,
-			'fields'      => array('priority'),
+			'mode'        => 2,
+			'fields'      => array('subject', 'observer', 'priority DESC', 'title'),
 			'panelLayout' => 'filter;search,limit',
 		),
 		'global_operations' => array(
@@ -113,6 +113,7 @@ $GLOBALS['TL_DCA']['tl_observer'] = array(
 			'exclude'   => true,
 			'search'    => true,
 			'sorting'   => true,
+			'flag'      => 1,
 			'inputType' => 'text',
 			'eval'      => array('mandatory' => true, 'tl_class' => 'w50'),
 			'sql'       => "varchar(255) NOT NULL default ''",
@@ -238,14 +239,14 @@ $GLOBALS['TL_DCA']['tl_observer'] = array(
 			'label'     => &$GLOBALS['TL_LANG']['tl_observer']['invoked'],
 			'exclude'   => true,
 			'inputType' => 'text',
-			'eval'      => array('rgxp' => 'datim', 'readonly' => 'true', 'tl_class' => 'clr w50'),
+			'eval'      => array('rgxp' => 'datim', 'readonly' => 'true', 'tl_class' => 'clr w50', 'doNotCopy' => true),
 			'sql'       => "varchar(10) NOT NULL default ''",
 		),
 		'invokedState'        => array(
 			'label'     => &$GLOBALS['TL_LANG']['tl_observer']['invokedState'],
 			'exclude'   => true,
 			'inputType' => 'text',
-			'eval'      => array('tl_class' => 'w50', 'includeBlankOption' => true, 'readonly' => true),
+			'eval'      => array('tl_class' => 'w50', 'includeBlankOption' => true, 'readonly' => true, 'doNotCopy' => true),
 			'sql'       => "varchar(64) NOT NULL default ''",
 		),
 		'observer'            => array(
