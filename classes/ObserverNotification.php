@@ -12,7 +12,9 @@ namespace HeimrichHannot\Observer;
 
 
 use HeimrichHannot\FormHybrid\DC_Hybrid;
+use HeimrichHannot\Haste\DC_Table;
 use HeimrichHannot\Haste\Model\MemberModel;
+use HeimrichHannot\Haste\Util\FormSubmission;
 use HeimrichHannot\NotificationCenterPlus\NotificationCenterPlus;
 use HeimrichHannot\Submissions\SubmissionModel;
 use NotificationCenter\Model\Message;
@@ -69,10 +71,7 @@ class ObserverNotification
 
 		foreach ($arrSet as $strGroup => $objModel)
 		{
-			$objDc = new DC_Hybrid($objModel->getTable());
-			$objDc->activeRecord = $objModel;
-			$arrDca = $GLOBALS['TL_DCA'][$objModel->getTable()];
-			$arrTokens = array_merge($arrTokens, SubmissionModel::tokenizeData(SubmissionModel::prepareData($objModel, $objModel->getTable(), $arrDca, $objDc), $strGroup));
+			$arrTokens = array_merge($arrTokens, FormSubmission::tokenizeData(FormSubmission::prepareData($objModel, $objModel->getTable()), $strGroup));
 		}
 
 		$arrTokens['salutation_member'] = NotificationCenterPlus::createSalutation($objMember->language ?: 'en', $objMember);

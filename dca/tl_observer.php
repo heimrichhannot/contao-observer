@@ -31,7 +31,7 @@ $GLOBALS['TL_DCA']['tl_observer'] = array(
 		),
 		'sorting'           => array(
 			'mode'        => 2,
-			'fields'      => array('subject', 'observer', 'priority DESC', 'title'),
+			'fields'      => array('observer', 'priority DESC', 'title'),
 			'panelLayout' => 'filter;search,limit',
 		),
 		'global_operations' => array(
@@ -83,11 +83,12 @@ $GLOBALS['TL_DCA']['tl_observer'] = array(
 		),
 	),
 	'palettes'    => array(
-		'__selector__'                        => array('subject', 'useCronExpression', 'action', 'limitMembers', 'addObserverStates', 'published'),
+		'__selector__'                        => array('subject', 'addContextAge', 'useCronExpression', 'action', 'limitMembers', 'addObserverStates', 'published'),
 		'default'                             => '{general_legend},subject;{publish_legend},published;',
-		ObserverConfig::OBSERVER_SUBJECT_MAIl => '{general_legend},subject,title;{mailbox_legend},imapPath,imapLogin,imapPassword,imapOptions,imapRetriesNum,attachmentsDir,expungeOnDisconnect,imapSearchCriteria;{cronjob_legend},cronInterval,useCronExpression,priority,invoked,invokedState;{observer_legend},observer;{expert_legend},debug,addObserverStates;{publish_legend},published;',
+		ObserverConfig::OBSERVER_SUBJECT_MAIl => '{general_legend},subject,title;{mailbox_legend},imapPath,imapLogin,imapPassword,imapOptions,imapRetriesNum,attachmentsDir,expungeOnDisconnect,imapSearchCriteria,addContextAge;{cronjob_legend},cronInterval,useCronExpression,priority,invoked,invokedState;{observer_legend},observer;{expert_legend},debug,addObserverStates;{publish_legend},published;',
 	),
 	'subpalettes' => array(
+		'addContextAge'     => 'contextAgeAttribute, contextAge',
 		'useCronExpression' => 'cronExpression',
 		'addObserverStates' => 'observerStates',
 		'limitMembers'      => 'memberGroupMembers',
@@ -128,6 +129,29 @@ $GLOBALS['TL_DCA']['tl_observer'] = array(
 			'reference'        => &$GLOBALS['TL_LANG']['OBSERVER_SUBJECT'],
 			'eval'             => array('includeBlankOption' => true, 'chosen' => true, 'submitOnChange' => true, 'mandatory' => true),
 			'sql'              => "varchar(64) NOT NULL default ''",
+		),
+		'addContextAge'       => array(
+			'label'     => &$GLOBALS['TL_LANG']['tl_observer']['addContextAge'],
+			'exclude'   => true,
+			'inputType' => 'checkbox',
+			'eval'      => array('tl_class' => 'clr', 'submitOnChange' => true),
+			'sql'       => "char(1) NOT NULL default ''",
+		),
+		'contextAgeAttribute' => array(
+			'label'     => &$GLOBALS['TL_LANG']['tl_observer']['contextAgeAttribute'],
+			'exclude'   => true,
+			'default'   => 'tstamp',
+			'inputType' => 'text',
+			'eval'      => array('mandatory' => true, 'tl_class' => 'w50', 'maxlength' => 128),
+			'sql'       => "varchar(128) NOT NULL default 'tstamp'",
+		),
+		'contextAge'          => array(
+			'label'     => &$GLOBALS['TL_LANG']['tl_observer']['contextAge'],
+			'exclude'   => true,
+			'default'   => 300,
+			'inputType' => 'text',
+			'eval'      => array('mandatory' => true, 'tl_class' => 'w50', 'rgxp' => 'digit'),
+			'sql'       => "varchar(10) NOT NULL default '300'",
 		),
 		'imapPath'            => array(
 			'label'     => &$GLOBALS['TL_LANG']['tl_observer']['imapPath'],

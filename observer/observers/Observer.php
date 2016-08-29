@@ -11,13 +11,14 @@
 namespace HeimrichHannot\Observer;
 
 
+use HeimrichHannot\FormHybrid\DC_Hybrid;
 use HeimrichHannot\Haste\Util\Classes;
+use HeimrichHannot\Versions\VersionModel;
 
 abstract class Observer
 {
-	const STATE_ERROR    = 'error';
-	const STATE_SUCCESS  = 'success';
-	const STATE_RUNONCE = 'runonce';
+	const STATE_ERROR   = 'error';
+	const STATE_SUCCESS = 'success';
 
 	/**
 	 * The current child entity identifier
@@ -53,7 +54,7 @@ abstract class Observer
 
 		$arrStates = array(Observer::STATE_SUCCESS);
 
-		if($objSubject->getModel()->addObserverStates)
+		if ($objSubject->getModel()->addObserverStates)
 		{
 			$arrStates = deserialize($objSubject->getModel()->observerStates, true);
 		}

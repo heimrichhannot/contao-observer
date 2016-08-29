@@ -71,4 +71,61 @@ abstract class Subject
 	{
 		$this->context = $context;
 	}
+
+	/**
+	 * Check the context against its age and return true if the waiting time elapsed
+	 * @internal Use before the observer will be updated
+	 * @param $context The context entity
+	 * @param $attribute Overwrite the contextAgeAttribute
+	 *
+	 * @return bool Return true if the current context should not be updated within the observer
+	 */
+	public function waitForContext($context, $attribute = null)
+	{
+		if(!$this->getModel()->addContextAge)
+		{
+			return false;
+		}
+
+		if($attribute === null)
+		{
+			$attribute = $this->getModel()->contextAgeAttribute;
+		}
+
+		$seconds = $this->getModel()->contextAge;
+		$tstamp = null;
+		$time = time();
+
+		if(is_object($context))
+		{
+			if(!isset($context->{$attribute}))
+			{
+				return false;
+			}
+
+			$tstamp = $context->{$attribute};
+		}
+		else if(is_array($context))
+		{
+			if(!isset($context[$attribute]))
+			{
+				return false;
+			}
+
+			$tstamp = $context[$attribute];
+		}
+
+		if($tstamp === null)
+		{
+			return false;
+		}
+
+		// date format no timestamp yet
+		if(strtotime($tstamp) !== false)
+		{
+			$tstamp = strtotime($tstamp);
+		}
+
+		return ($time - $seconds) <= $tstamp;
+	}
 }

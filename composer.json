@@ -1,38 +1,46 @@
 {
-    "name": "heimrichhannot/contao-observer",
-    "description":"A observer module for contao.",
-    "keywords":["contao", "observer", "imap", "cron"],
-    "type": "contao-module",
-    "homepage":"https://github.com/heimrichhannot/contao-observer",
-    "license":"LGPL-3.0+",
-    "authors":[
-        {
-            "name":"Heimrich & Hannot",
-            "email":"digitales@heimrich-hannot.de",
-            "homepage":"http://www.heimrich-hannot.de",
-            "role":"Developer"
-        }
-    ],
-    "support":{
-        "issues":"https://github.com/heimrichhannot/contao-observer/issues"
-    },
-    "require": {
-        "contao/core": ">=3.2,<4-dev",
-        "contao-community-alliance/composer-installer": "*",
-        "heimrichhannot/contao-tagsinput": "~2.0",
-        "heimrichhannot/contao-submissions": "~1.0",
-        "heimrichhannot/contao-notification_center_plus": "~1.0",
-		"php-imap/php-imap": "~2.0",
-		"mtdowling/cron-expression": "~1.0"
-    },
-    "autoload": {
-        "classmap": [""]
-    },
-    "extra": {
-        "contao": {
-            "sources": {
-                "": "system/modules/observer"
-            }
-        }
+  "name": "heimrichhannot/contao-observer",
+  "description": "A observer for contao.",
+  "keywords": [
+    "contao",
+    "observer",
+    "imap",
+    "cron"
+  ],
+  "type": "contao-module",
+  "homepage": "https://github.com/heimrichhannot/contao-observer",
+  "license": "LGPL-3.0+",
+  "authors": [
+    {
+      "name": "Heimrich & Hannot",
+      "email": "digitales@heimrich-hannot.de",
+      "homepage": "http://www.heimrich-hannot.de",
+      "role": "Developer"
     }
+  ],
+  "support": {
+    "issues": "https://github.com/heimrichhannot/contao-observer/issues"
+  },
+  "require": {
+    "php": ">=5.4.0, <7",
+    "contao/core": ">=3.2,<4-dev",
+    "contao-community-alliance/composer-installer": "*",
+    "heimrichhannot/contao-tagsinput": "~2.0",
+    "heimrichhannot/haste_plus": "~1.0",
+    "heimrichhannot/contao-notification_center_plus": "~1.0",
+    "php-imap/php-imap": "~2.0",
+    "mtdowling/cron-expression": "~1.0"
+  },
+  "autoload": {
+    "classmap": [
+      ""
+    ]
+  },
+  "extra": {
+    "contao": {
+      "sources": {
+        "": "system/modules/observer"
+      }
+    }
+  }
 }

@@ -7,6 +7,9 @@ $arrLang = &$GLOBALS['TL_LANG']['tl_observer'];
  */
 $arrLang['title']               = array('Title', 'Please enter a title.');
 $arrLang['subject']             = array('Subject', 'Please select a subject.');
+$arrLang['addContextAge']       = array('Wait for context age', 'Check option if you want to wait until the age of the context elapsed.');
+$arrLang['contextAgeAttribute'] = array('Context age attribute', 'Enter a valid context attribute, that should be checked against the context age (default: tstamp).');
+$arrLang['contextAge']          = array('Context age (in seconds)', 'Enter the age of the context seconds, that should be waited until the observer will be triggered (default: 5 minutes; value: 300).');
 $arrLang['imapPath']            = array('IMAP Path', 'The path to the IMAP Mailbox (e.g. {imap.gmail.com:993/imap/ssl}INBOX).');
 $arrLang['imapLogin']           = array('IMAP Login', 'The login/username for the IMAP Mailbox (e.g. some@gmail.com).');
 $arrLang['imapPassword']        = array('IMAP Password', 'The password for the IMAP Mailbox.');
