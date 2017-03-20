@@ -41,7 +41,7 @@ $arrLang['addObserverStates']   = [
 ];
 $arrLang['observerStates']      = [
     'Observerzustände',
-    'Wählen Sie hier Zustände aus, die neuen Log-Einträgen hinzugefügt werden sollen. (Standard: "Erfolg").'
+    'Wählen Sie hier die Zustände aus, die neuen History-Einträgen hinzugefügt werden und dazu führen, dass ein Import nicht neu angestoßen wird. (Standard: "Erfolg").'
 ];
 $arrLang['notification']        = ['Benachrichtigung', 'Wählen Sie hier eine Benachrichtigung aus.'];
 $arrLang['members']             = ['Mitglieder', 'Wählen Sie hier Mitglieder aus.'];
