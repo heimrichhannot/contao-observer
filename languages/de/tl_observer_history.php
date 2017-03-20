@@ -13,6 +13,6 @@ $arrLang = &$GLOBALS['TL_LANG']['tl_observer_history'];
 /**
  * Fields
  */
-$arrLang['tstamp']   = ['Revision date', ''];
-$arrLang['entityId'] = ['Entity ID', 'The id of the entity, the run on.'];
-$arrLang['state']    = ['State', 'The state of the run action.'];
+$arrLang['tstamp']   = ['Änderungsdatum', ''];
+$arrLang['entityId'] = ['Entity ID', 'Ein eindeutiger String auf den vor der Ausführung geprüft wird.'];
+$arrLang['state']    = ['Zustand', 'Der Zustand der Aktion.'];

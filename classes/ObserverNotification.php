@@ -48,7 +48,7 @@ class ObserverNotification
 		return MemberModel::findAllActiveByIds($arrIds);
 	}
 
-	public static function sendNotification($intMessage, ObserverModel $objObserver, \Model $objEntity, \MemberModel $objMember, $arrTokens = array())
+	public static function sendNotification($intMessage, ObserverModel $objObserver, \Model $objEntity, \MemberModel $objMember, $arrTokens = [])
 	{
 		if ($intMessage && ($objMessage = Message::findByPk($intMessage)) !== null)
 		{
@@ -61,13 +61,11 @@ class ObserverNotification
 
 	public static function generateTokens(ObserverModel $objObserver, \Model $objEntity, \MemberModel $objMember)
 	{
-		$arrSet = array
-		(
+		$arrSet = [
 			'observer_entity' => $objEntity,
-			'observer_member' => $objMember
-		);
+			'observer_member' => $objMember];
 
-		$arrTokens = array();
+		$arrTokens = [];
 
 		foreach ($arrSet as $strGroup => $objModel)
 		{

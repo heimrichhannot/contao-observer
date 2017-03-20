@@ -15,7 +15,7 @@ use HeimrichHannot\Haste\Util\Classes;
 
 class ObserverConfig
 {
-	const OBSERVER_SUBJECT_MAIl = 'mail';
+	const OBSERVER_SUBJECT_MAIL = 'mail';
 	
 	const OBSERVER_DIRECTORY_ATTACHMENT = 'files/observer/attachments';
 	
@@ -35,7 +35,7 @@ class ObserverConfig
 	 */
 	public static function getObserverByModel(ObserverModel $objModel)
 	{
-		$arrOptions = array();
+		$arrOptions = [];
 
 		if(($objObserver = ObserverManager::findSubjectByModel($objModel)) === null)
 		{
@@ -69,7 +69,7 @@ class ObserverConfig
 	 */
 	public static function getCronIntervals()
 	{
-		return Classes::getConstantsByPrefixes(__CLASS__, array('OBSERVER_CRON_'));
+		return Classes::getConstantsByPrefixes(__CLASS__, ['OBSERVER_CRON_']);
 	}
 
 	/**

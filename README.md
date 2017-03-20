@@ -20,20 +20,20 @@ be received, the attached Taskobserver will create a new Task from a given mail 
 The observer manager observes all entities withing the minutely contao cron job. It works within the poor man's minutly cronjob out of the box, or you can call the binary script within you crontab:
 
 ```
-* * * * * /path/to/contao/system/modules/observer/bin/manager
+* * * * * php /path/to/contao/system/modules/observer/bin/manager.php
 ```
 
 Note: When you installed the observer using Composer, the path to the binary differs:
 
 ```
-/path/to/contao/composer/vendor/heimrichhannot/observer/bin/manager
+php /path/to/contao/composer/vendor/heimrichhannot/observer/bin/manager.php
 ```
 
 ### Make usage within you custom module
 
 #### Add a new subject
 
-A subject is for example a mailbox, or tasks within a given tasklist, with needed criterias (UNSEEN Mail, unassigned Tasks…).
+A subject is for example a mailbox, or tasks within a given tasklist, with needed criteria (UNSEEN Mail, unassigned Tasks…).
 
 #####  1. Add the subject to your config.php
 
@@ -42,9 +42,9 @@ A subject is for example a mailbox, or tasks within a given tasklist, with neede
 array_insert(
 	$GLOBALS['OBSERVER']['SUBJECTS'],
 	0,
-	array(
+	[
 		'MY_SUBJECT_NAME' => 'MyNamespace\Observer\MySubject',
-	)
+	]
 );
 ```
 
@@ -92,25 +92,25 @@ class TaskSubject extends Subject
 	 */
 	public function notify()
 	{
-		$arrLists    = deserialize($this->getModel()->tasklists, true);
-		$arrCriteria = deserialize($this->getModel()->taskCriteria, true);
+		$arrLists    = deserialize($this->getObserver()->tasklists, true);
+		$arrCriteria = deserialize($this->getObserver()->taskCriteria, true);
 
 		$objTasks = TaskModel::findByListsAndCriteria($arrLists, $arrCriteria);
 
 		if ($objTasks === null)
 		{
-			if ($this->objModel->debug)
+			if ($this->getObserver()->debug)
 			{
-				ObserverLog::add($this->objModel->id, 'No tasks for given filter found.', __CLASS__ . ':' . __METHOD__);
+				ObserverLog::add($this->getObserver()->id, 'No tasks for given filter found.', __CLASS__ . ':' . __METHOD__);
 			}
 
 			return;
 		}
 
-		if ($this->objModel->debug)
+		if ($this->getObserver()->debug)
 		{
 			$count = $objTasks->count();
-			ObserverLog::add($this->objModel->id, $count . ($count == 1 ? ' Task' : ' Tasks') . ' found for given filter.', __CLASS__ . ':' . __METHOD__);
+			ObserverLog::add($this->getObserver()->id, $count . ($count == 1 ? ' Task' : ' Tasks') . ' found for given filter.', __CLASS__ . ':' . __METHOD__);
 		}
 
 		while ($objTasks->next())
@@ -119,9 +119,9 @@ class TaskSubject extends Subject
 
 			if (!$this->waitForContext($this->context))
 			{
-				if ($this->getModel()->debug)
+				if ($this->getObserver()->debug)
 				{
-					ObserverLog::add($this->getModel()->id, 'Observers updated with task: "' . $objTasks->title . '" [ID:' . $objTasks->id .  '].', __CLASS__ . ':' . __METHOD__);
+					ObserverLog::add($this->getObserver()->id, 'Observers updated with task: "' . $objTasks->title . '" [ID:' . $objTasks->id .  '].', __CLASS__ . ':' . __METHOD__);
 				}
 
 				foreach ($this->observers as $obs)
@@ -132,9 +132,9 @@ class TaskSubject extends Subject
 				continue;
 			}
 
-			if ($this->getModel()->debug)
+			if ($this->getObserver()->debug)
 			{
-				ObserverLog::add($this->getModel()->id, 'Waiting time for task: "' . $objTasks->title . '" [ID:' . $objTasks->id .  '] not elapsed yet.', __CLASS__ . ':' . __METHOD__);
+				ObserverLog::add($this->getObserver()->id, 'Waiting time for task: "' . $objTasks->title . '" [ID:' . $objTasks->id .  '] not elapsed yet.', __CLASS__ . ':' . __METHOD__);
 			}
 		}
 
@@ -145,7 +145,7 @@ class TaskSubject extends Subject
 
 #### Add a new observer
 
-A observer is for example a notification, that will be send to a given member (for example a task assignee) when a subject with given criterias were found.
+A observer is for example a notification, that will be send to a given member (for example a task assignee) when a subject with given criteria were found.
 
 #####  1. Add the observer to your config.php
 
@@ -154,9 +154,9 @@ A observer is for example a notification, that will be send to a given member (f
 array_insert(
 	$GLOBALS['OBSERVER']['OBSERVERS'],
 	0,
-	array(
+	[
 		'MY_OBSERVER_NAME' => 'MyNamespace\Observer\MyObserver',
-	)
+	]
 );
 ```
 
@@ -187,11 +187,20 @@ use HeimrichHannot\Versions\VersionModel;
 
 class TaskNotificationObserver extends NotificationObserver
 {
+    // optionally define new states for your observer
+    const STATE_EXISTING = 'existing';
+    
+    const STATES = [
+        self::STATE_SUCCESS,
+        self::STATE_EXISTING,
+        self::STATE_ERROR
+    ];
+    
 	protected function createNotification()
 	{
 		ObserverNotification::sendNotification(
-			$this->objSubject->getModel()->notification,
-			$this->objSubject->getModel(),
+			$this->objSubject->getObserver()->notification,
+			$this->objSubject->getObserver(),
 			$this->objSubject->getContext(),
 			$this->getMember()
 		);
@@ -233,7 +242,7 @@ class TaskNotificationObserver extends NotificationObserver
 			$objAssignee = TaskHelper::getCurrentAssignee($this->getSubject()->getContext());
 
 			// add current assignee
-			if ($this->getSubject()->getModel()->notifyAssignee && $objAssignee !== null)
+			if ($this->getSubject()->getObserver()->notifyAssignee && $objAssignee !== null)
 			{
 				// skip if author is assignee
 				if ($objAuthor->id != $objAssignee->id)
@@ -243,7 +252,7 @@ class TaskNotificationObserver extends NotificationObserver
 			}
 
 			// add previous assignee
-			if($this->getSubject()->getModel()->notifyPreviousAssignee)
+			if($this->getSubject()->getObserver()->notifyPreviousAssignee)
 			{
 				if (($objPreviousAssignee = TaskHelper::getPreviousAssignee($this->getSubject()->getContext())) !== null)
 				{
@@ -252,13 +261,13 @@ class TaskNotificationObserver extends NotificationObserver
 			}
 
 			// remove current assignee
-			if($this->getSubject()->getModel()->skipNotifyAssignee && $objAssignee !== null)
+			if($this->getSubject()->getObserver()->skipNotifyAssignee && $objAssignee !== null)
 			{
 				$objMembers = Model::removeModelFromCollection($objAssignee, $objMembers);
 			}
 
 			// remove previous assignee
-			if($this->getSubject()->getModel()->skipNotifyPreviousAssignee)
+			if($this->getSubject()->getObserver()->skipNotifyPreviousAssignee)
 			{
 				if (($objPreviousAssignee = TaskHelper::getPreviousAssignee($this->getSubject()->getContext())) !== null)
 				{
@@ -272,9 +281,9 @@ class TaskNotificationObserver extends NotificationObserver
 
 	public static function getPalettes(\DataContainer $dc = null)
 	{
-		return array(
+		return [
 			CollabConfig::OBSERVER_SUBJECT_TASK => 'notification,notifyAssignee,notifyPreviousAssignee,members,memberGroups,limitMembers,skipNotifyAssignee,skipNotifyPreviousAssignee',
-		);
+		];
 	}
 
 

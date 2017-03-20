@@ -25,18 +25,18 @@ class ObserverHistoryModel extends \Model
 	 *
 	 * @return \ObserverHistoryModel|null The model or null if there are no history entries
 	 */
-	public static function findByParentAndEntityIdAndState($pid, $varId, array $arrStates = array(), array $arrOptions = array())
+	public static function findByParentAndEntityIdAndState($pid, $varId, array $arrStates = [], array $arrOptions = [])
 	{
 		$t          = static::$strTable;
-		$arrColumns = array("$t.pid = ? AND $t.entityId = ?");
+		$arrColumns = ["$t.pid = ? AND $t.entityId = ?"];
 
 		$arrColumns[] = \Database::getInstance()->findInSet('state', $arrStates);
 
-		return static::findBy($arrColumns, array($pid, $varId), $arrOptions);
+		return static::findBy($arrColumns, [$pid, $varId], $arrOptions);
 	}
 
 
-	public static function hasRun($pid, $varId, array $arrStates = array(Observer::STATE_SUCCESS), array $arrOptions = array())
+	public static function hasRun($pid, $varId, array $arrStates = [Observer::STATE_SUCCESS], array $arrOptions = [])
 	{
 		return static::findByParentAndEntityIdAndState($pid, $varId, $arrStates, $arrOptions) !== null;
 	}

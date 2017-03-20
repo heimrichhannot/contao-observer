@@ -13,7 +13,7 @@ $arrLang = &$GLOBALS['TL_LANG']['tl_observer_log'];
 /**
  * Fields
  */
-$arrLang['tstamp'] = ['Revision date', ''];
-$arrLang['action'] = ['Category', 'Category of the action'];
-$arrLang['text']   = ['Details', 'Details of the log entry'];
-$arrLang['func']   = ['Function', 'Name of the initiating function'];
+$arrLang['tstamp'] = ['Änderungsdatum', ''];
+$arrLang['action'] = ['Aktion', 'Wählen Sie hier die Aktion aus.'];
+$arrLang['text']   = ['Details', 'Details des Log-Eintrags'];
+$arrLang['func']   = ['Funktion', 'Name der aufrufenden Funktion'];

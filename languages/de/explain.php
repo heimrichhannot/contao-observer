@@ -11,7 +11,7 @@
 
 $arrLang = &$GLOBALS['TL_LANG']['XPL'];
 
-$arrLang['imapSearchCriteria'][0][0] = 'Criteria';
+$arrLang['imapSearchCriteria'][0][0] = 'Kritrien';
 $arrLang['imapSearchCriteria'][0][1] = '<ul>
         <li>
          <spa>

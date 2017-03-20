@@ -24,13 +24,13 @@ class ObserverLogModel extends \Model
 	 *
 	 * @return \ObserverLogModel|null The model or null if there are no latest log entries
 	 */
-	public static function findLatestByTypeAndPid($strType, $intId, array $arrOptions = array())
+	public static function findLatestByTypeAndPid($strType, $intId, array $arrOptions = [])
 	{
 		$t          = static::$strTable;
-		$arrColumns = array("$t.type = ? AND $t.pid = ?");
+		$arrColumns = ["$t.type = ? AND $t.pid = ?"];
 		
 		$arrOptions['order'] = 'tstamp DESC';
 		
-		return static::findOneBy($arrColumns, array($strType, $intId), $arrOptions);
+		return static::findOneBy($arrColumns, [$strType, $intId], $arrOptions);
 	}
 }

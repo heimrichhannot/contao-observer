@@ -15,10 +15,10 @@ class ObserverModel extends \Model
 	 *
 	 * @return \ObserverModel|null The model or null if there are no observers
 	 */
-	public static function findPublishedBySubjects(array $arrSubjects = array(), array $arrOptions=array())
+	public static function findPublishedBySubjects(array $arrSubjects = [], array $arrOptions= [])
 	{
 		$t = static::$strTable;
-		$arrColumns = array();
+		$arrColumns = [];
 		
 		if (!BE_USER_LOGGED_IN)
 		{

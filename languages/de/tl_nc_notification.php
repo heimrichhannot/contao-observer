@@ -12,4 +12,4 @@
 $arrLang = &$GLOBALS['TL_LANG']['tl_nc_notification'];
 
 $arrLang['type'][\HeimrichHannot\Observer\ObserverNotification::NOTIFICATION_TYPE_OBSERVER] = 'Observer';
-$arrLang['type'][\HeimrichHannot\Observer\ObserverNotification::NOTIFICATION_TYPE_OBSERVER_NOTIFICATION] = ['Notifications', ''];
+$arrLang['type'][\HeimrichHannot\Observer\ObserverNotification::NOTIFICATION_TYPE_OBSERVER_NOTIFICATION] = ['Benachrichtigungen', ''];

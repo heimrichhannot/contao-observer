@@ -17,111 +17,123 @@ use HeimrichHannot\Versions\VersionModel;
 
 abstract class Observer
 {
-	const STATE_ERROR   = 'error';
-	const STATE_SUCCESS = 'success';
+    const STATE_SUCCESS = 'success';
+    const STATE_ERROR   = 'error';
 
-	/**
-	 * The current child entity identifier
-	 *
-	 * @var mixed
-	 */
-	protected $entityId;
+    const STATES = [
+        self::STATE_SUCCESS,
+        self::STATE_ERROR
+    ];
 
-	/**
-	 * The current observer state
-	 *
-	 * @var string
-	 */
-	protected $state;
+    /**
+     * The current child entity identifier
+     *
+     * @var mixed
+     */
+    protected $entityId;
 
-	/**
-	 * The current Subject, for internal usage
-	 *
-	 * @var Subject
-	 */
-	protected $objSubject;
+    /**
+     * The current observer state
+     *
+     * @var string
+     */
+    protected $state;
 
-	/**
-	 * @param Subject The subject object
-	 *
-	 * @return boolean
-	 */
-	public function update(Subject $objSubject)
-	{
-		$this->objSubject = $objSubject;
+    /**
+     * The current Subject, for internal usage
+     *
+     * @var Subject
+     */
+    protected $objSubject;
 
-		$this->entityId = $this->getEntityId();
+    /**
+     * @param Subject The subject object
+     *
+     * @return boolean
+     */
+    public function update(Subject $objSubject)
+    {
+        $this->objSubject = $objSubject;
 
-		$arrStates = array(Observer::STATE_SUCCESS);
+        $this->entityId = $this->getEntityId();
 
-		if ($objSubject->getModel()->addObserverStates)
-		{
-			$arrStates = deserialize($objSubject->getModel()->observerStates, true);
-		}
+        $arrStates = [Observer::STATE_SUCCESS];
 
-		if (ObserverHistoryModel::hasRun($objSubject->getModel()->id, $this->getEntityId(), $arrStates))
-		{
-			return true;
-		}
+        if ($objSubject->getObserver()->addObserverStates)
+        {
+            $arrStates = deserialize($objSubject->getObserver()->observerStates, true);
+        }
 
-		$this->doUpdate();
+        if (ObserverHistoryModel::hasRun($objSubject->getObserver()->id, $this->getEntityId(), $arrStates))
+        {
+            return true;
+        }
 
-		if (($objHistory = ObserverHistoryModel::findByParentAndEntityIdAndState($objSubject->getModel()->id, $this->getEntityId())) == null)
-		{
-			$objHistory = new ObserverHistoryModel();
-		}
+        $this->doUpdate();
 
-		$objHistory->pid      = $objSubject->getModel()->id;
-		$objHistory->tstamp   = time();
-		$objHistory->entityId = $this->getEntityId();
-		$objHistory->state    = $this->getState();
-		$objHistory->save();
+        if (($objHistory = ObserverHistoryModel::findByParentAndEntityIdAndState($objSubject->getObserver()->id, $this->getEntityId())) == null)
+        {
+            $objHistory = new ObserverHistoryModel();
+        }
 
-		return true;
-	}
+        $objHistory->pid      = $objSubject->getObserver()->id;
+        $objHistory->tstamp   = time();
+        $objHistory->entityId = $this->getEntityId();
+        $objHistory->state    = $this->getState();
+        $objHistory->save();
 
-	abstract protected function doUpdate();
+        return true;
+    }
 
-	/**
-	 * @param \DataContainer $dc
-	 *
-	 * @return array of modified palettes (key = palettes, value = fields that should be invoked after the action field)
-	 */
-	abstract public static function getPalettes(\DataContainer $dc = null);
+    abstract protected function doUpdate();
 
-	/**
-	 * Return the current entity identifier which child of the subject
-	 *
-	 * @return mixed
-	 */
-	abstract protected function getEntityId();
+    /**
+     * @param \DataContainer $dc
+     *
+     * @return array of modified palettes (key = palettes, value = fields that should be invoked after the action field)
+     */
+    abstract public static function getPalettes(\DataContainer $dc = null);
 
-	/**
-	 * @return mixed
-	 */
-	public function getState()
-	{
-		return $this->state;
-	}
+    /**
+     * Return the current entity identifier which child of the subject
+     *
+     * @return mixed
+     */
+    abstract protected function getEntityId();
 
-	/**
-	 * @param mixed $state
-	 */
-	public function setState($state)
-	{
-		$this->state = $state;
-	}
+    /**
+     * @return mixed
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
 
-	/**
-	 * @return Subject
-	 */
-	public function getSubject()
-	{
-		return $this->objSubject;
-	}
+    /**
+     * @param mixed $state
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
+    }
 
-	public static function getStates()
-	{
-		return Classes::getConstantsByPrefixes(__CLASS__, array('STATE_'));
-	}
+    /**
+     * @return Subject
+     */
+    public function getSubject()
+    {
+        return $this->objSubject;
+    }
+
+    public static function getStates(\DataContainer $dc)
+    {
+        $strClass = 'HeimrichHannot\Observer\Observer';
+
+        if (($objObserver = ObserverModel::findByPk($dc->id)) !== null)
+        {
+            $strClass = ObserverConfig::getObserverClass($objObserver->observer);
+        }
+
+        return $strClass::STATES;
+    }
 }

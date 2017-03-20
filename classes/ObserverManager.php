@@ -145,7 +145,7 @@ class ObserverManager
 	{
 		if ($strObserver === null)
 		{
-			$strObserver = $objSubject->getModel()->observer;
+			$strObserver = $objSubject->getObserver()->observer;
 		}
 
 		if (($strClass = ObserverConfig::getObserverClass($strObserver)) === null)

@@ -30,7 +30,7 @@ abstract class NotificationObserver extends Observer
 	{
 		$this->objSubject = $objSubject;
 
-		$objMembers = ObserverNotification::findToBeNotifiedMembers($this->getSubject()->getModel());
+		$objMembers = ObserverNotification::findToBeNotifiedMembers($this->getSubject()->getObserver());
 
 		$objMembers = $this->modifyMembers($objMembers);
 
@@ -45,26 +45,26 @@ abstract class NotificationObserver extends Observer
 
 			$this->entityId = $this->getEntityId();
 
-			$arrStates = array(Observer::STATE_SUCCESS);
+			$arrStates = [Observer::STATE_SUCCESS];
 
-			if ($objSubject->getModel()->addObserverStates)
+			if ($objSubject->getObserver()->addObserverStates)
 			{
-				$arrStates = deserialize($objSubject->getModel()->observerStates, true);
+				$arrStates = deserialize($objSubject->getObserver()->observerStates, true);
 			}
 
-			if (ObserverHistoryModel::hasRun($objSubject->getModel()->id, $this->getEntityId(), $arrStates))
+			if (ObserverHistoryModel::hasRun($objSubject->getObserver()->id, $this->getEntityId(), $arrStates))
 			{
 				return true;
 			}
 
 			$this->doUpdate();
 
-			if (($objHistory = ObserverHistoryModel::findByParentAndEntityIdAndState($objSubject->getModel()->id, $this->getEntityId())) == null)
+			if (($objHistory = ObserverHistoryModel::findByParentAndEntityIdAndState($objSubject->getObserver()->id, $this->getEntityId())) == null)
 			{
 				$objHistory = new ObserverHistoryModel();
 			}
 
-			$objHistory->pid      = $objSubject->getModel()->id;
+			$objHistory->pid      = $objSubject->getObserver()->id;
 			$objHistory->tstamp   = time();
 			$objHistory->entityId = $this->getEntityId();
 			$objHistory->state    = $this->getState();
