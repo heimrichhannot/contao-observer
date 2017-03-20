@@ -92,7 +92,10 @@ abstract class Observer
      *
      * @return array of modified palettes (key = palettes, value = fields that should be invoked after the action field)
      */
-    abstract public static function getPalettes(\DataContainer $dc = null);
+    public static function getPalettes(\DataContainer $dc = null)
+    {
+        return '';
+    }
 
     /**
      * Return the current entity identifier which child of the subject

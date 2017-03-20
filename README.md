@@ -279,6 +279,7 @@ class TaskNotificationObserver extends NotificationObserver
 		return $objMembers;
 	}
 
+    // optional
 	public static function getPalettes(\DataContainer $dc = null)
 	{
 		return [
