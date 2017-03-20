@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.1.0] - 2017-03-16
+## [1.1.0] - 2017-03-20
 
 ### Added
 - German localization
