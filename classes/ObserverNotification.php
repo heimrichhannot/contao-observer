@@ -11,12 +11,9 @@
 namespace HeimrichHannot\Observer;
 
 
-use HeimrichHannot\FormHybrid\DC_Hybrid;
-use HeimrichHannot\Haste\DC_Table;
 use HeimrichHannot\Haste\Model\MemberModel;
 use HeimrichHannot\Haste\Util\FormSubmission;
-use HeimrichHannot\NotificationCenterPlus\NotificationCenterPlus;
-use HeimrichHannot\Submissions\SubmissionModel;
+use HeimrichHannot\Haste\Util\Salutations;
 use NotificationCenter\Model\Message;
 
 class ObserverNotification
@@ -72,7 +69,7 @@ class ObserverNotification
 			$arrTokens = array_merge($arrTokens, FormSubmission::tokenizeData(FormSubmission::prepareData($objModel, $objModel->getTable()), $strGroup));
 		}
 
-		$arrTokens['salutation_member'] = NotificationCenterPlus::createSalutation($objMember->language ?: 'en', $objMember);
+		$arrTokens['salutation_member'] = Salutations::createSalutation($objMember->language ?: 'en', $objMember);
 
 		return $arrTokens;
 	}

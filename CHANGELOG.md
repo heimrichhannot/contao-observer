@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.4] - 2017-03-20
+
+### Fixed
+- replaced missing method call `NotificationCenterPlus::createSalutation()` with `HeimrichHannot\Haste\Util\Salutations::createSalutation()`
+
 ## [1.1.3] - 2017-03-20
 
 ### Changed
