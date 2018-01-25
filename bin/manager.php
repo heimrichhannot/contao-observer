@@ -16,6 +16,7 @@ if (file_exists(__DIR__ . '/../../../initialize.php')) {
     require_once(__DIR__ . '/../../../initialize.php');
 } elseif (file_exists(__DIR__.'/../../../../system/initialize.php'))
 {
+    define('TL_SCRIPT', 'contao/install.php');
     //Contao 4 location
     require_once (__DIR__.'/../../../../system/initialize.php');
 } else  {
