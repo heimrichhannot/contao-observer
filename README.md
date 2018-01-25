@@ -27,12 +27,12 @@ Contao 3 without composer:
 
 Contao 3 with composer:
 ```
-php /path/to/contao/composer/vendor/heimrichhannot/contao-observer/bin/manager.php
+* * * * * php /path/to/contao/composer/vendor/heimrichhannot/contao-observer/bin/manager.php
 ```
 
 Contao 4:
 ```
-php /path/to/contao/vendor/heimrichhannot/contao-observer/bin/manager.php
+* * * * * php /path/to/contao/vendor/heimrichhannot/contao-observer/bin/manager.php
 ```
 
 ### Make usage within you custom module

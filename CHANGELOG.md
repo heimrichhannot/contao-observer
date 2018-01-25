@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2018-01-26
+
+### Added 
+- Contao 4 support for cronjob (manager.php)
+
 ## [1.1.5] - 2017-06-26
 
 ### Added
