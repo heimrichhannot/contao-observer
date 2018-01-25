@@ -19,14 +19,20 @@ be received, the attached Taskobserver will create a new Task from a given mail 
 
 The observer manager observes all entities withing the minutely contao cron job. It works within the poor man's minutly cronjob out of the box, or you can call the binary script within you crontab:
 
+Contao 3 without composer:
+
 ```
 * * * * * php /path/to/contao/system/modules/observer/bin/manager.php
 ```
 
-Note: When you installed the observer using Composer, the path to the binary differs:
-
+Contao 3 with composer:
 ```
-php /path/to/contao/composer/vendor/heimrichhannot/observer/bin/manager.php
+php /path/to/contao/composer/vendor/heimrichhannot/contao-observer/bin/manager.php
+```
+
+Contao 4:
+```
+php /path/to/contao/vendor/heimrichhannot/contao-observer/bin/manager.php
 ```
 
 ### Make usage within you custom module

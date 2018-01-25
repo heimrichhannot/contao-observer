@@ -14,11 +14,14 @@ define('TL_MODE', 'FE');
 if (file_exists(__DIR__ . '/../../../initialize.php')) {
     // Regular way
     require_once(__DIR__ . '/../../../initialize.php');
-} else {
+} elseif (file_exists(__DIR__.'/../../../../system/initialize.php'))
+{
+    //Contao 4 location
+    require_once (__DIR__.'/../../../../system/initialize.php');
+} else  {
     // Try composer location (see #77)
     require_once(__DIR__ . '/../../../../../system/initialize.php');
 }
-
 
 $manager = $GLOBALS['OBSERVER']['MANAGER'];
 $manager->run();
